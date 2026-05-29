@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <errno.h>
 
 // maximal length of user input
 #define MAX_COMMAND_LINE_LENGTH 1024
@@ -73,27 +74,146 @@ void tsh_out_info(){
 	printf("use info or help to print this\n");
 }
 
+int kill_internal(int internal_id){
+  if(internal_id < ipid){
+    job_descr_t* process = job_list[internal_id];
+    if (process->job_status == JOB_RUNNING){
+      process->exit_status = kill(process->pid, SIGKILL);
+      return 0;
+    }
+  }
+  return -1;
+}
+
+void tsh_kill(char** argv, int numtokens){
+  int internal_id;
+  if(numtokens > 1){
+    errno = 0;
+    internal_id = (int) strtol(argv[1], (char**)NULL, 10);
+    if (errno == ERANGE){
+      printf("Range Error on argv[1]. Please provide a valid number\n");
+    }else{
+      if(kill_internal(internal_id) != 0)
+        printf("ID is too large or process not running\n");
+    }
+  }
+}
+
+// return value of waitpid()
+int check_and_collect_if_finished(int job_list_idx){
+  int status;
+  pid_t pid;
+  if((pid = waitpid(job_list[job_list_idx]->pid, &status, WNOHANG)) > 0){
+    // process finished
+    job_list[job_list_idx]->exit_status = status;
+    job_list[job_list_idx]->job_status = JOB_FINISHED;
+  }
+  return pid;
+}
+
 // function for printing all processes and their status of the current session
 void tsh_out_list(){
 	for(unsigned i=0; i<job_list.size(); i++){
 		job_descr_t* curr_job = job_list[i];
-		printf("%3i | pid=%5i , exit=%3i | %s\n", curr_job->internal_id, curr_job->pid, curr_job->exit_status, curr_job->command);
+		printf("%3i | pid=%5i , exit=", curr_job->internal_id, curr_job->pid);
+    
+    // print changes depending of job status and exit code
+    switch (curr_job->job_status){
+      case JOB_RUNNING:
+        pid_t pid;
+        pid = check_and_collect_if_finished(i);
+        if(pid <= 0){ 
+          printf("unknown [running]");
+          break;
+        }
+        [[fallthrough]];
+      case JOB_FINISHED:
+        if (WIFEXITED(curr_job->exit_status)){
+            if (WEXITSTATUS(curr_job->exit_status) == 255){
+              printf("%-5i [command not found (or general execution error)]", WEXITSTATUS(curr_job->exit_status));
+            }else{
+              printf("%-5i [exited]", WEXITSTATUS(curr_job->exit_status));
+            }
+        } else if (WIFSIGNALED(curr_job->exit_status)) {
+          printf("%-5i [process killed by signal]", WTERMSIG(curr_job->exit_status));
+        } else if (WIFSTOPPED(curr_job->exit_status)) {
+          printf("%-5i [process stopped by signal]", WSTOPSIG(curr_job->exit_status));
+        } else{
+          printf("%-5i [exited other way]", curr_job->exit_status);
+        }
+    }
+    printf(" | %s\n", curr_job->command);
 	}
 }
 
-pid_t tsh_start_process(char** argv, int first_token, int numtokens){
+int wait_internal(int internal_id){
+  if(internal_id < ipid){
+    job_descr_t* process = job_list[internal_id];
+    if (process->job_status == JOB_RUNNING){
+      waitpid(process->pid, &process->exit_status,0);
+      process->job_status = JOB_FINISHED;
+      return 0;
+    }
+  }
+  return -1;
+}
+
+void tsh_wait(char** argv, int numtokens){
+  int internal_id;
+  if(numtokens > 1){
+    errno = 0;
+    internal_id = (int) strtol(argv[1], (char**)NULL, 10);
+    if (errno == ERANGE){
+      printf("Range Error on argv[1]. Please provide a valid number\n");
+    }else{
+      if(wait_internal(internal_id) != 0)
+        printf("ID is too large or process not running\n");
+    }
+  }
+}
+
+pid_t tsh_start_process_job(char** argv, int numtokens){
 	job_descr_t* new_process = (job_descr_t*) malloc(sizeof(job_descr_t));
 	job_list.push_back(new_process);
 	
 	// copy command to new_process
 	new_process->command = (char*) malloc((MAX_COMMAND_LINE_LENGTH+1)*sizeof(char));
 	strcpy(new_process->command, argv[0]);
-	/*for(int i=1; i<numtokens; i++){
-		strcat(new_process.command, argv[i]);
-	}*/
+	for(int i=1; i<numtokens; i++){
+    strcat(new_process->command, " ");
+		strcat(new_process->command, argv[i]);
+	}
 	
-	new_process->internal_id = ++ipid;
-	new_process->exit_status = JOB_RUNNING;
+	new_process->internal_id = ipid++;
+	new_process->job_status = JOB_RUNNING;
+	
+	// create new fork
+	int child_status;
+	if ((new_process->pid = fork()) == 0){
+		// inside child execute given command
+		child_status = execvp(argv[0], argv);
+		_exit(child_status);
+	}
+
+  // finish status of process need to be collected by another action
+	
+	return new_process->pid;
+}
+
+pid_t tsh_start_process(char** argv, int numtokens){
+	job_descr_t* new_process = (job_descr_t*) malloc(sizeof(job_descr_t));
+	job_list.push_back(new_process);
+	
+	// copy command to new_process
+	new_process->command = (char*) malloc((MAX_COMMAND_LINE_LENGTH+1)*sizeof(char));
+	strcpy(new_process->command, argv[0]);
+	for(int i=1; i<numtokens; i++){
+    strcat(new_process->command, " ");
+		strcat(new_process->command, argv[i]);
+	}
+	
+	new_process->internal_id = ipid++;
+	new_process->job_status = JOB_RUNNING;
 	
 	// create new fork
 	int status;
@@ -109,6 +229,7 @@ pid_t tsh_start_process(char** argv, int first_token, int numtokens){
 		// unset for exit handler
 		foreground_process_id = 0;
 		new_process->exit_status = status;
+    new_process->job_status = JOB_FINISHED;
 		if (WIFEXITED(status)){
 			if (WEXITSTATUS(status) == 255){
 				printf("[command not found (or general execution error)] [status = %d]\n", WEXITSTATUS(status));
@@ -151,11 +272,6 @@ tsh_prompt_and_process()
   // ======================================================================
   // BEGIN: HERE GOES YOUR CODE! 
   // ======================================================================
-  
-  // TODO: REMOVE THIS FOR LOOP AFTER YOUR SOLUTION IS FINISHED
-  for( int i=0; i < numtokens; i++ ) {
-    printf( "%s\n", argv_intern[i] );
-  }
 
   // check if at least one token was entered at the command line
   // (if not: do nothing)
@@ -176,22 +292,19 @@ tsh_prompt_and_process()
       }
       else if( strcmp( "wait", argv_intern[0] ) == 0 )
       {
-          // TODO: Here goes your code for the wait command
-          // (good idea: put it into an extra function)
+          tsh_wait(argv_intern, numtokens);
       }
       else if( strcmp( "kill", argv_intern[0] ) == 0 )
       {
-          // TODO: Here goes your code for the kill command
-          // (good idea: put it into an extra function)
+          tsh_kill(argv_intern, numtokens);
       }
       else if( strcmp( "job", argv_intern[0] ) == 0 )
       {
-          // TODO: Here goes your code for the job command
-          // (good idea: put it into an extra function)
+          tsh_start_process_job(&argv_intern[1], numtokens-1);
       }
       else
       {
-          tsh_start_process(argv_intern, 0, numtokens);
+          tsh_start_process(argv_intern, numtokens);
       }
   }
 

@@ -56,7 +56,7 @@ static std::vector<job_descr_t*> job_list;
 
 // force exit handler. On normal opperation close tsh itself.
 // when an foreground process is running SIGINT is send to the process
-void exit_handler(int dummy){
+void exit_handler(int sig){
 	if (foreground_process_id != 0){
 		job_descr_t* process = job_list[foreground_process_id];
 		if (process){

@@ -175,7 +175,7 @@ void tsh_wait(char** argv, int numtokens){
 pid_t tsh_start_process_job(char** argv, int numtokens){
 	job_descr_t* new_process = (job_descr_t*) malloc(sizeof(job_descr_t));
 	job_list.push_back(new_process);
-	
+
 	// copy command to new_process
 	new_process->command = (char*) malloc((MAX_COMMAND_LINE_LENGTH+1)*sizeof(char));
 	strcpy(new_process->command, argv[0]);
@@ -184,14 +184,22 @@ pid_t tsh_start_process_job(char** argv, int numtokens){
 		strcat(new_process->command, argv[i]);
 	}
 	
+  // check if output is to be suppressed
+  int cmd_start = (strcmp( "-s", argv[1] ) == 0) ? 2 : 1;
+
 	new_process->internal_id = ipid++;
 	new_process->job_status = JOB_RUNNING;
 	
 	// create new fork
 	int child_status;
 	if ((new_process->pid = fork()) == 0){
+    if (cmd_start == 2){
+      // replace stdout with /dev/null to prevent output
+      freopen("/dev/null", "w", stdout);
+    }
+
 		// inside child execute given command
-		child_status = execvp(argv[0], argv);
+		child_status = execvp(argv[cmd_start], &argv[cmd_start]);
 		_exit(child_status);
 	}
 
@@ -300,7 +308,7 @@ tsh_prompt_and_process()
       }
       else if( strcmp( "job", argv_intern[0] ) == 0 )
       {
-          tsh_start_process_job(&argv_intern[1], numtokens-1);
+          tsh_start_process_job(argv_intern, numtokens);
       }
       else
       {

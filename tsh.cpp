@@ -70,13 +70,14 @@ void exit_handler(int sig){
 }
 
 // print info on how to use tsh
-void tsh_out_info(){
+void tsh_out_help(){
   printf("available commands:\n");
-  printf("info or help\t\t print this message\n");
+  printf("help\t\t print this message\n");
   printf("exit or quit\t\t exit tsh\n");
   printf("job [-s] [exe] [arg]\t starts the given program in the background. Optional -s suppresses the output of background program\n");
   printf("wait [ipid]\t\t wait for given background program to end execution. Uses internal ID\n");
   printf("kill [ipid]\t\t kills given program ungracefully with SIKILL. Uses internal ID\n");
+  printf("info [ipid]\t\t displays info for given program\n");
   printf("list\t\t\t list all executed programs and their exit or current status\n");
   printf("[exe] [argv]\t\t executed the given exe in the foreground with the given arguments\n");
 }
@@ -118,17 +119,15 @@ int check_and_collect_if_finished(int job_list_idx){
   return pid;
 }
 
-// function for printing all processes and their status of the current session
-void tsh_out_list(){
-	for(unsigned i=0; i<job_list.size(); i++){
-		job_descr_t* curr_job = job_list[i];
+void out_info_internal(int internal_pid){
+  job_descr_t* curr_job = job_list[internal_pid];
 		printf("%3i | pid=%5i , exit=", curr_job->internal_id, curr_job->pid);
     
     // print changes depending of job status and exit code
     switch (curr_job->job_status){
       case JOB_RUNNING:
         pid_t pid;
-        pid = check_and_collect_if_finished(i);
+        pid = check_and_collect_if_finished(internal_pid);
         if(pid <= 0){ 
           printf("unknown [running]");
           break;
@@ -150,6 +149,25 @@ void tsh_out_list(){
         }
     }
     printf(" | %s\n", curr_job->command);
+}
+
+void tsh_out_info(char** argv, int numtokens){
+  int internal_id;
+  if(numtokens > 1){
+    errno = 0;
+    internal_id = (int) strtol(argv[1], (char**)NULL, 10);
+    if (errno == ERANGE){
+      printf("Range Error on argv[1]. Please provide a valid number\n");
+    }else{
+      out_info_internal(internal_id);
+    }
+  }
+}
+
+// function for printing all processes and their status of the current session
+void tsh_out_list(){
+	for(unsigned i=0; i<job_list.size(); i++){
+		out_info_internal(i);
 	}
 }
 
@@ -240,7 +258,7 @@ pid_t tsh_start_process(char** argv, int numtokens){
 	}else{
 		// set for exit handler
 		foreground_process_id = new_process->internal_id;
-		waitpid(-1, &status,0);
+		waitpid(new_process->pid, &status,0);
 		// unset for exit handler
 		foreground_process_id = 0;
 		new_process->exit_status = status;
@@ -297,9 +315,12 @@ tsh_prompt_and_process()
           // leave tsh
           _exit( 0 );
       }
-      else if( (strcmp( "info", argv_intern[0] ) == 0) || (strcmp( "help", argv_intern[0] ) == 0))
+      else if( (strcmp( "info", argv_intern[0] ) == 0))
       {
-          tsh_out_info();
+          tsh_out_info(argv_intern, numtokens);
+      }
+      else if((strcmp( "help", argv_intern[0] ) == 0)){
+          tsh_out_help();
       }
       else if( strcmp( "list", argv_intern[0] ) == 0 )
       {

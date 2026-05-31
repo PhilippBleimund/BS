@@ -65,6 +65,12 @@ void exit_handler(int sig){
 		}
 	}else{
 		printf("force exit tsh\n");
+    // free all memory
+    for(unsigned i=0; i<job_list.size(); i++){
+      free(job_list[i]->command);
+      free(job_list[i]);
+    }
+    job_list.clear();
 		_exit( 0 );
 	}
 }
@@ -260,7 +266,7 @@ pid_t tsh_start_process(char** argv, int numtokens){
 		foreground_process_id = new_process->internal_id;
 		waitpid(new_process->pid, &status,0);
 		// unset for exit handler
-		foreground_process_id = 0;
+		foreground_process_id = -1;
 		new_process->exit_status = status;
     new_process->job_status = JOB_FINISHED;
 		if (WIFEXITED(status)){

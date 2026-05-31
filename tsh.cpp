@@ -325,7 +325,7 @@ tsh_prompt_and_process()
       if( (strcmp( "quit", argv_intern[0] ) == 0) || (strcmp( "exit", argv_intern[0] ) == 0))
       {
           // leave tsh
-          _exit( 0 );
+          exit_handler(SIGINT);
       }
       else if( (strcmp( "info", argv_intern[0] ) == 0))
       {

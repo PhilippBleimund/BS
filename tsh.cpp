@@ -110,6 +110,8 @@ void tsh_kill(char** argv, int numtokens){
       if(kill_internal(internal_id) != 0)
         printf("ID is too large or process not running\n");
     }
+  }else{
+    printf("please provide a ipid\n");
   }
 }
 
@@ -167,6 +169,8 @@ void tsh_out_info(char** argv, int numtokens){
     }else{
       out_info_internal(internal_id);
     }
+  }else{
+    printf("please provide a ipid\n");
   }
 }
 
@@ -200,6 +204,8 @@ void tsh_wait(char** argv, int numtokens){
       if(wait_internal(internal_id) != 0)
         printf("ID is too large or process not running\n");
     }
+  }else{
+    printf("please provide a ipid\n");
   }
 }
 

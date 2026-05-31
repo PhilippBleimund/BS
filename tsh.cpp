@@ -71,7 +71,14 @@ void exit_handler(int sig){
 
 // print info on how to use tsh
 void tsh_out_info(){
-	printf("use info or help to print this\n");
+  printf("available commands:\n");
+  printf("info or help\t\t print this message\n");
+  printf("exit or quit\t\t exit tsh\n");
+  printf("job [-s] [exe] [arg]\t starts the given program in the background. Optional -s suppresses the output of background program\n");
+  printf("wait [ipid]\t\t wait for given background program to end execution. Uses internal ID\n");
+  printf("kill [ipid]\t\t kills given program ungracefully with SIKILL. Uses internal ID\n");
+  printf("list\t\t\t list all executed programs and their exit or current status\n");
+  printf("[exe] [argv]\t\t executed the given exe in the foreground with the given arguments\n");
 }
 
 int kill_internal(int internal_id){

@@ -9,7 +9,7 @@ ENDLESS = endless
 SLOW    = slow
 
 CPP      = g++
-CPPFLAGS = -D_GNU_SOURCE -Wall -g
+CPPFLAGS = -std=gnu++17 -D_GNU_SOURCE -Wall -g
 LNFLAGS  = -Wall
 
 

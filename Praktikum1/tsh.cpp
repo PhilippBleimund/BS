@@ -164,8 +164,8 @@ void tsh_out_info(char** argv, int numtokens){
   if(numtokens > 1){
     errno = 0;
     internal_id = (int) strtol(argv[1], (char**)NULL, 10);
-    if(internal_id > ipid){
-    	printf("[job not found]");
+    if(internal_id >= ipid){
+    	printf("ID is too large\n");
     	return;
     }
     if (errno == ERANGE){

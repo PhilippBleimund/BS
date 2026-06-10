@@ -11,7 +11,7 @@
  */
 
 #include "memfitHelpers.H"
-
+#include <limits.h>
 
 unsigned
 firstFitAlloc( unsigned blockSize )
@@ -23,13 +23,14 @@ firstFitAlloc( unsigned blockSize )
     if (freeList[i].size >= blockSize){
       // free space found 
       address = allocBlock(i, blockSize);
+      break;
     }
   }
   
   return address;
 }
 
-volatile unsigned lastAddressNextFit = 0;
+unsigned lastAddressNextFit = 0;
 
 unsigned
 nextFitAlloc( unsigned blockSize )
@@ -51,24 +52,18 @@ nextFitAlloc( unsigned blockSize )
 
   // loop over free space to check if there is a block bigger than blockSize
   // start at last Address
-  int found = 0;
-  for (unsigned i=lastAddress_idx;i<freeList.size();i++){
-    if (freeList[i].size >= blockSize){
-      // free space found
-      found = 1; 
+  unsigned n = freeList.size();
+  for (unsigned j = 0; j < n; j++) {
+    unsigned i = (lastAddress_idx + j) % n;
+    if (freeList[i].size >= blockSize) {
+      lastAddressNextFit = freeList[i].address;
       address = allocBlock(i, blockSize);
+      break;
     }
   }
-  // if nothing was found start from first address
-  if (!found){
-    for (unsigned i=0;i<lastAddress_idx;i++){
-      if (freeList[i].size >= blockSize){
-        // free space found
-        address = allocBlock(i, blockSize);
-      }
-    }
-  }
-  lastAddressNextFit = address;
+  if (address == 0)
+    lastAddressNextFit = 0;
+
 
   return address;
 }
@@ -80,8 +75,8 @@ bestFitAlloc( unsigned blockSize )
   unsigned address = 0;
 
   // loop over free space to find smallest fitting block
-  unsigned best = freeList.size()-1;
-  unsigned lastFit = blockSize;
+  int best = -1;
+  unsigned lastFit = UINT_MAX;
   for (unsigned i=0;i<freeList.size();i++){
     int nextFit = freeList[i].size - blockSize;
     if (nextFit >= 0 && (unsigned) nextFit < lastFit){
@@ -89,6 +84,7 @@ bestFitAlloc( unsigned blockSize )
       lastFit = nextFit;
     }
   }
+  if (best == -1) return 0;
   address = allocBlock(best, blockSize);
 
   return address;
@@ -101,7 +97,7 @@ worstFitAlloc( unsigned blockSize )
   unsigned address = 0;
 
   // loop over free space to find biggest fitting block
-  unsigned best = freeList.size()-1;
+  int best = -1;
   unsigned lastFit = 0;
   for (unsigned i=0;i<freeList.size();i++){
     int nextFit = freeList[i].size - blockSize;
@@ -110,6 +106,7 @@ worstFitAlloc( unsigned blockSize )
       lastFit = nextFit;
     }
   }
+  if (best == -1) return 0;
   address = allocBlock(best, blockSize);
 
   return address;

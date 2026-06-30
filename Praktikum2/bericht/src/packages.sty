@@ -1,0 +1,141 @@
+% ##########################
+% required packages
+% ##########################
+
+% custom headers and footers
+\usepackage{fancyhdr}
+
+% =========
+% Captions
+% =========
+% more options for captions
+\usepackage{caption}
+% extends captions to subfigures
+\usepackage{subcaption}
+
+% =========
+% Graphics
+% =========
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{fadings}
+\usetikzlibrary{decorations.pathmorphing,patterns}
+%\usetikzlibrary{external}
+%\tikzexternalize
+\usetikzlibrary{angles,quotes}
+\usepackage{tikz-3dplot}
+% inline math and much much more
+\usepackage{pgfmath}
+\usepackage{pgfplots}
+\usepgfplotslibrary{units} % to add units easily to axis
+\usepgfplotslibrary{fillbetween} % to fill inbetween curves
+\usepgfplotslibrary{colormaps} % to create colormaps
+\usepackage{overpic}
+
+% =========
+% Math
+% =========
+% better math typesetting
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+% enables \fpeval{} to do math inline
+\usepackage{xfp}
+% inline if statements
+\usepackage{ifthen}
+
+% =========
+% Footnotes
+% =========
+\usepackage{footnote}
+% perpage -> resets counter after each page
+% hang    -> sets footnote flush with margin (makes \footnotemargin possible)
+% bottom  -> footnotes appear below bottom floats
+% stable  -> footnotes in headers get formatted correctly
+% multiple-> multiple footnotes at the same "word" get separated by a comma
+\usepackage[perpage, hang, bottom, stable, multiple]{footmisc}
+\setlength\footnotemargin{10pt}
+% \tablefootnote in a table to get working footnotes
+\usepackage{tablefootnote}
+
+% \FloatBarrier to create a line which floats (figure, etc.) can not pass
+\usepackage[section]{placeins}
+
+% =========
+% References
+% =========
+% create hyperlinks throughout the documents
+\usepackage[ngerman]{hyperref}
+% when using \cref{1,2,3} \cref{1,,2,,3} can be used to name the references individually
+\usepackage[ngerman, nameinlink]{cleveref}
+\creflabelformat{equation}{#2\textup{#1}#3}
+
+
+% =========
+% Tables
+% =========
+% can change color of table cells
+\usepackage{colortbl}
+% create single cell over multiple rows
+\usepackage{multirow}
+% better typesetting inside a cell (custom line breaks)
+\usepackage{makecell}
+% more options for spacing
+\usepackage{tabularx}
+% better tables
+\usepackage{booktabs}
+
+
+% =========
+% Misc
+% =========
+% misc package for better redefine and counter
+\usepackage{calc}
+% ability to control reset mechanism of counters
+\usepackage{chngcntr}
+% better color support
+\usepackage{xcolor}
+% able to append pdf pages into output pdf
+\usepackage{pdfpages}
+% create clickable url's
+\usepackage{url}
+% SI-Units
+\usepackage{siunitx}
+% more complex command definitions
+\usepackage{xparse}
+% better literature
+\usepackage{biblatex}
+% able to use \author{} and other after title creation
+\usepackage{authoraftertitle}
+% insert custom todo notes in the free space at the sides
+\usepackage{todonotes}
+
+% ##########################
+% optional packages
+% ##########################
+
+% used to typeset programming code
+\usepackage{listings}
+
+% enables cross reference in case of multiple stand alone latex documents
+%\usepackage{xr}
+
+% used to create chemical notations and diagrams
+%\usepackage{chemformula}
+
+% creates generated text sections
+%\usepackage{blindtext}
+
+% used to create custom floating envioments 
+%\usepackage{float}
+
+% put the caption to the side of float
+%\usepackage{sidecap}
+
+% lets text wrap around graphics
+%\usepackage{wrapfig}

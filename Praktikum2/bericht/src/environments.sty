@@ -1,0 +1,138 @@
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\newcommand{\captionref} [1]{\textit{\nameref{#1}}}
+\newcommand{\tableref} [1]{\textit{Tabelle \ref{#1}}}
+
+%define book numbering:
+\def\frontmatter{%
+    \pagenumbering{Roman}
+    \setcounter{page}{1}
+    \renewcommand{\thesection}{\Roman{section}}
+}%
+
+\def\mainmatter{%
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
+    \setcounter{section}{0}
+    \renewcommand{\thesection}{\arabic{section}}
+}%
+
+\def\backmatter{%
+    \setcounter{section}{0}
+    \renewcommand{\thesection}{\Alph{section}}
+}%
+
+%define commands for color mainupulation
+\newcommand{\lightercolor}[3]{% Reference Color, Percentage, New Color Name
+    \colorlet{#3}{#1!#2!white}
+}
+
+\newcommand{\darkercolor}[3]{% Reference Color, Percentage, New Color Name
+    \colorlet{#3}{#1!#2!black}
+}
+
+\pgfplotsset{
+  compat=newest,
+  SpectralLinesStyle/.style={
+    width=.9\linewidth, height=7cm
+  },
+  DottedGridStyle/.style={
+    grid style={dotted,gray, thin}
+  },
+}
+
+\pgfdeclaredecoration{penciline}{initial}{
+    \state{initial}[width=+\pgfdecoratedinputsegmentremainingdistance,auto corner on length=1mm,]{
+        \pgfpathcurveto%
+        {% From
+            \pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}
+                            {\pgfdecorationsegmentamplitude}
+        }
+        {%  Control 1
+        \pgfmathrand
+        \pgfpointadd{\pgfqpoint{\pgfdecoratedinputsegmentremainingdistance}{0pt}}
+                        {\pgfqpoint{-\pgfdecorationsegmentaspect\pgfdecoratedinputsegmentremainingdistance}%
+                                        {\pgfmathresult\pgfdecorationsegmentamplitude}
+                        }
+        }
+        {%TO 
+        \pgfpointadd{\pgfpointdecoratedinputsegmentlast}{\pgfpoint{1pt}{1pt}}
+        }
+    }
+    \state{final}{}
+}
+
+\tikzfading[name=fade out, 
+    inner color=transparent!0,
+    outer color=transparent!100]
+
+\newcommand\pgfmathparseFPU[1]{\begingroup%
+\pgfkeys{/pgf/fpu,/pgf/fpu/output format=fixed}%
+\pgfmathparse{#1}%
+\pgfmathsmuggle\pgfmathresult\endgroup}%
+
+\newlength{\conditionwd}
+\newenvironment{conditions}[1][mit:]
+  {%
+   #1\tabularx{\textwidth-\widthof{#1}}[t]{
+     >{$}l<{$} @{${}={}$} X@{}
+   }%
+  }
+  {\endtabularx\\[\belowdisplayskip]}
+
+\tikzset{%
+  block/.style    = {draw, thick, rectangle, minimum height = 3em,
+    minimum width = 3em},
+  sum/.style      = {draw, circle, node distance = 1.5cm}, % Adder
+  input/.style    = {coordinate}, % Input
+  output/.style   = {coordinate}, % Output
+   base/.style = {rectangle, rounded corners, draw=black, minimum width=2cm, minimum height=1cm, text centered}
+}
+
+\makeatletter
+\pgfdeclareshape{asymcloud}{
+  \inheritsavedanchors[from=ellipse]
+  \inheritanchorborder[from=ellipse]
+  \inheritanchor[from=ellipse]{center}
+  \inheritanchor[from=ellipse]{north}
+  \inheritanchor[from=ellipse]{south}
+  \inheritanchor[from=ellipse]{west}
+  \inheritanchor[from=ellipse]{east}
+  \inheritanchor[from=ellipse]{north west}
+  \inheritanchor[from=ellipse]{north east}
+  \inheritanchor[from=ellipse]{south west}
+  \inheritanchor[from=ellipse]{south east}
+
+  \anchor{center}{\pgfpoint{0cm}{0cm}}
+
+  \backgroundpath{
+    \pgfpathmoveto{\pgfpoint{-0.6cm}{-0.7cm}}
+    \pgfpathcurveto{\pgfpoint{-1.3cm}{-1.1cm}}{\pgfpoint{-1.7cm}{0.3cm}}{\pgfpoint{-0.7cm}{0.3cm}}
+    \pgfpathcurveto{\pgfpoint{-0.6cm}{0.7cm}}{\pgfpoint{-0.2cm}{0.9cm}}{\pgfpoint{0.2cm}{0.7cm}}
+    \pgfpathcurveto{\pgfpoint{0.5cm}{1.5cm}}{\pgfpoint{1.6cm}{1.3cm}}{\pgfpoint{1.7cm}{0.5cm}}
+    \pgfpathcurveto{\pgfpoint{2.5cm}{0.4cm}}{\pgfpoint{2.2cm}{-1cm}}{\pgfpoint{1.4cm}{-0.6cm}}
+    \pgfpathcurveto{\pgfpoint{1.2cm}{-1cm}}{\pgfpoint{0.8cm}{-1cm}}{\pgfpoint{0.5cm}{-0.7cm}}
+    \pgfpathcurveto{\pgfpoint{0.1cm}{-1cm}}{\pgfpoint{-0.3cm}{-1cm}}{\pgfpoint{-0.6cm}{-0.7cm}}
+    \pgfpathclose
+    \pgfusepath{stroke} % Draw the shape
+  }
+}
+\makeatother
+
+\newcommand\Chapter[2]{%
+  \chapter[#1]{%
+    #1\hfill\makebox[0pt][l]{} {\footnotesize\itshape#2}
+  }
+}
+
+\newcommand\Section[2]{%
+  \section[#1]{%
+    #1\hfill\makebox[0pt][l]{} {\footnotesize\itshape#2}
+  }
+}
+
+\newcommand\Subsection[2]{%
+  \subsection[#1]{%
+    #1\hfill\makebox[0pt][l]{} {\footnotesize\itshape#2}
+  }
+}

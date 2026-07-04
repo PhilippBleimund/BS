@@ -18,7 +18,8 @@
 
 #define MEM_SIZE         1000
 #define MEM_MIN_ADDRESS  100
-#define ALLOC_MAX        100
+
+unsigned ALLOC_MAX; 
 
 // ---------------------------------------------------------------------------
 
@@ -86,6 +87,13 @@ simulateAllocs( unsigned seedVal, allocAlg_t allocAlg )
 int
 main( int argc, char **argv )
 {
+  // parse input argument
+  if (argc > 1){
+    ALLOC_MAX = strtol(argv[1], NULL, 0);
+  }else{
+    ALLOC_MAX = 100;
+  }
+
   // use array count to store results for the four different mem. alloc. methods
   unsigned count[4] = {0,0,0,0};
   unsigned singleCount;
@@ -96,22 +104,18 @@ main( int argc, char **argv )
   for( unsigned seedVal = 0; seedVal < 100000; seedVal += 1000 )
   {
     count[0] += (singleCount = simulateAllocs( seedVal, FIRST_FIT ));
-    printf( "FIRST_FIT: Memory allocation failure after %u successful memory operations.\n",
-            singleCount );
+    //printf( "FIRST_FIT: Memory allocation failure after %u successful memory operations.\n", singleCount );
 
     count[1] += (singleCount = simulateAllocs( seedVal, NEXT_FIT ));
-    printf( "NEXT_FIT : Memory allocation failure after %u successful memory operations.\n",
-            singleCount );
+    //printf( "NEXT_FIT : Memory allocation failure after %u successful memory operations.\n", singleCount );
 
     count[2] += (singleCount = simulateAllocs( seedVal, BEST_FIT ));
-    printf( "BEST_FIT : Memory allocation failure after %u successful memory operations.\n",
-            singleCount );
+    //printf( "BEST_FIT : Memory allocation failure after %u successful memory operations.\n", singleCount );
 
     count[3] += (singleCount = simulateAllocs( seedVal, WORST_FIT ));
-    printf( "WORST_FIT: Memory allocation failure after %u successful memory operations.\n",
-            singleCount );
+    //printf( "WORST_FIT: Memory allocation failure after %u successful memory operations.\n", singleCount );
 
-    printf( "\n" );
+    //printf( "\n" );
 
     itCount++;
   }

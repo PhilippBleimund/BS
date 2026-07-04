@@ -4,7 +4,7 @@ BINARY="./memfit"
 RESULTS_DIR="./data"
 RESULTS_CSV="${RESULTS_DIR}/benchmark_results$(date +%Y%m%d_%H%M%S).csv"
 
-MAX_ALLOC=({100..1000..10})
+MAX_ALLOC=({1..1000..1})
 
 make
 

@@ -15,6 +15,7 @@
 #===========================================================================
 
 BIN     = memfit
+BIN_TIME = memfit_time
 
 CC       = gcc
 CFLAGS   = -D_GNU_SOURCE -Wall -g
@@ -28,21 +29,26 @@ OBJS1 := $(CFILES:.c=.o)
 CPPFILES := $(wildcard *.C)
 OBJS2 := $(CPPFILES:.C=.o)
 
+COMMON_OBJS := $(filter-out memfit.o memfit_time.o,$(OBJS2)) $(OBJS1)
 HEADERFILES := $(wildcard *.H)
 
 %.o: %.c $(HEADERFILES)
 	@echo "Compiling $<..."
-	@$(CC) $(CFLAGS) -c $<
+	@$(CC) $(CFLAGS) -c $
 
 %.o: %.C $(HEADERFILES)
 	@echo "Compiling $<..."
-	@$(CPP) $(CPPFLAGS) -c $<
+	@$(CPP) $(CPPFLAGS) -c $
 
-all: $(BIN)
+all: $(BIN) $(BIN_TIME)
 
-$(BIN): $(OBJS2) $(OBJS1)
+$(BIN): memfit.o $(COMMON_OBJS)
 	@echo "Linking $@..."
-	@$(CPP) $(LNFLAGS) -o $@ $(OBJS2) $(OBJS1)
+	@$(CPP) $(LNFLAGS) -o $@ memfit.o $(COMMON_OBJS)
+
+$(BIN_TIME): memfit_time.o $(COMMON_OBJS)
+	@echo "Linking $@..."
+	@$(CPP) $(LNFLAGS) -o $@ memfit_time.o $(COMMON_OBJS)
 
 clean:
 	@echo "Cleaning files..."

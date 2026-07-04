@@ -1,0 +1,58 @@
+\usepackage{xstring}
+
+\newcounter{authorcounter}
+\newcommand{\authors}[1]{%
+    \def\authorlist{#1}%
+}
+\newcommand{\printauthormatrikel}{%
+    \begingroup % Start a local group to avoid conflicts
+    \def\temp{}%
+    \foreach \authorname/\matrikel in \authorlist {%
+        \ifx\temp\empty%
+            \authorname (\matrikel)%
+        \else%
+            \authorname (\matrikel)%
+        \fi%
+        \xdef\temp{used}%
+    }%
+    \endgroup % End the local group
+}
+\newcommand{\setauthors}{%
+    \def\formattedauthors{}%
+    \foreach \authorname/\matrikel in \authorlist {%
+        \xdef\formattedauthors{\formattedauthors \authorname \space (\matrikel)\\}%
+    }%
+}
+\newcommand{\printauthors}{%
+    \def\temp{}%
+    \foreach \authorname/\matrikel in \authorlist {%
+        \ifx\temp\empty%
+            \authorname%
+        \else%
+            , \authorname%
+        \fi%
+        \xdef\temp{used}%
+    }%
+}
+\newcommand{\printsigfieldsgroup}{%
+    \foreach \authorname/\matrikel/\isSingle in \authorlist {%
+        \IfStrEq{\isSingle}{gB}{%
+        \noindent\parbox[t]{0.33\textwidth}{%
+            \hfill\\[2ex]
+            \hfill\rule{3.5cm}{.4pt} \\
+            \footnotesize{\authorname} \\
+        }\vspace{3ex}
+    }{}
+    }
+}
+\newcommand{\printsigfieldssingle}{%
+    \foreach \authorname/\matrikel/\isSingle in \authorlist {%
+        \IfStrEq{\isSingle}{eB}{%
+        \noindent\parbox[t]{0.33\textwidth}{%
+            \hfill\\[2ex]
+            \hfill\rule{3.5cm}{.4pt} \\
+            \footnotesize{\authorname} \\
+        }\vspace{3ex}
+    }{}
+    }
+}

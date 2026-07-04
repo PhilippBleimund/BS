@@ -1,0 +1,64 @@
+%\nocite{*} %Zeigt alle im Literaturverzeichnis stehenden Einträge
+%draft 
+\documentclass[BCOR=1cm]{scrartcl}
+\usepackage[left=1.9cm, right=1.9cm, top=2.5cm, bottom=2.5cm]{geometry}
+%\usepackage[onehalfspacing]{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage{ngerman}
+\usepackage{bibgerm}
+% removes the standard latex paragraph indentation
+%\setlength\parindent{0pt}
+
+\renewcommand{\listfigurename}{Abbildungsverzeichnis}
+\renewcommand{\listtablename}{Tabellenverzeichnis}
+
+\usepackage{src/packages}
+\usepackage{src/environments}
+\usepackage{src/authors}
+
+\usepackage[nohyperlinks, printonlyused]{acronym}
+
+\newcommand{\titlename}{PINI Team blau Hexapod}
+
+\addbibresource{src/literature.bib}
+
+% define the authors. Format: Name LastName/Matrikelnumber
+\authors{
+Philipp Bleimund/50033807/eB}
+
+% titlepage information
+\titlehead{\hfill\includegraphics[width=6cm]{images/HSBI-Logo.png}} % Das HSBI-Logo
+\subject{Hochschule Bielefeld\\Fachbereich Ingenieurwissenschaften und Mathematik\\Betriebssysteme}
+\title{Analyse von Speicherverhaltungsalgorithmen}
+\setauthors
+\author{\formattedauthors}
+\date{\today} % Das Datum der Abgabe
+
+\begin{document}
+
+    %\counterwithout{figure}{chapter}
+    %\counterwithout{table}{chapter}
+    %\counterwithout{equation}{chapter}s
+
+    %Kopfzeile und Fußzeile
+
+    \makeatletter
+    \maketitle
+    \makeatother
+    \pagenumbering{gobble}
+    \newpage
+    \tableofcontents
+    \newpage
+
+    \mainmatter
+
+    
+
+    \backmatter 
+
+    \newpage
+
+    %Literaturverzeichnis
+    \printbibliography[heading=bibintoc, title={Quellenverzeichnis}]
+    \clearpage
+\end{document}

@@ -28,16 +28,15 @@ unsigned firstFitAlloc(unsigned blockSize) {
   return address;
 }
 
-unsigned lastAddressNextFit = 0;
-
 unsigned nextFitAlloc(unsigned blockSize) {
+  unsigned lastAddressNextFit = 0; 
   unsigned address = 0;
 
+  if (freeList.empty())
+    return address;
+
   if (lastAddressNextFit == 0) {
-    if (freeList.size() >= 0)
-      lastAddressNextFit = freeList.front().address;
-    else
-      return address;
+    lastAddressNextFit = freeList.front().address;
   }
 
   // search for lastAddressNextFit

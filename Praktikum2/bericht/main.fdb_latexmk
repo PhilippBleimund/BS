@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 0 "main.bcf" "main.bbl" "main" 1783450483.6595 0
+["biber main"] 0 "main.bcf" "main.bbl" "main" 1783454875.14649 0
   "main.bcf" 0 -1 0 "pdflatex"
   "src/literature.bib" 0 -1 0 ""
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1783450480.33618 "/home/philippbleimund/git/hsbi/BS/Praktikum2/bericht/main.tex" "main.pdf" "main" 1783450483.6597 0
+["pdflatex"] 1783454871.8073 "/home/philippbleimund/git/hsbi/BS/Praktikum2/bericht/main.tex" "main.pdf" "main" 1783454875.1467 0
   "/etc/texmf/web2c/texmf.cnf" 1722168079.23504 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/philippbleimund/git/hsbi/BS/Praktikum2/bericht/main.tex" 1783169851.42367 1617 a052c892b1934f48cff139d626da1715 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -324,16 +324,16 @@
   "images/vergleich_loglog.png" 1783449803.89906 369093 2ec14e89b82daa3f7f996e6a439844e5 ""
   "images/vergleich_zeit.png" 1783449779.62372 223361 7762a671aa38be9d61cfa955024273be ""
   "images/vergleich_zoom.png" 1783449827.05119 576489 7402670025dedfd2a20b76b03bcf1dd5 ""
-  "main.aux" 1783450483.52768 4987 4af971b00ab7f8148e982ce6e40dec65 "pdflatex"
+  "main.aux" 1783454875.02557 4987 4af971b00ab7f8148e982ce6e40dec65 "pdflatex"
   "main.bbl" 0 -1 0 "biber main"
-  "main.out" 1783450481.52203 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "main.run.xml" 1783450483.53229 2309 be8a6452f059fa2704ab7287b4c56726 "pdflatex"
+  "main.out" 1783454873.0126 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "main.run.xml" 1783454875.03008 2309 be8a6452f059fa2704ab7287b4c56726 "pdflatex"
   "main.tex" 1783169851.42367 1617 a052c892b1934f48cff139d626da1715 ""
-  "main.toc" 1783450483.53229 514 cb451f454f4d0f12d4785b82941b4bde "pdflatex"
+  "main.toc" 1783454875.03008 514 cb451f454f4d0f12d4785b82941b4bde "pdflatex"
   "src/authors.sty" 1783168742.00587 1555 66431775f8ecfdb76e052a2ee7ebf9f1 ""
   "src/environments.sty" 1783168742.00691 4156 ae608407815a548915baabf5435b594c ""
   "src/packages.sty" 1783168742.00691 3573 33d21083ecdd92e768d18c6761c00f47 ""
-  "text.tex" 1783450472.9761 7686 05d749c123b2dd10bebbfd33d090608c ""
+  "text.tex" 1783454869.54908 7702 a6f3da1fd52f081d7320840e35651f5c ""
   (generated)
   "main.aux"
   "main.bcf"

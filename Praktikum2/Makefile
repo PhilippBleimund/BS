@@ -52,8 +52,8 @@ $(BIN_TIME): memfit_time.o $(COMMON_OBJS)
 
 clean:
 	@echo "Cleaning files..."
-	#@-rm *.o *~ $(BIN) $(BIN2) $(BIN3)
-	@-rm *.o *~ $(BIN)
+	#@-rm *.o *~ $(BIN) $(BIN_TIME) $(BIN2) $(BIN3)
+	@-rm *.o *~ $(BIN) $(BIN_TIME)
 
 #
 # Bedeutung Makefile Makros:

@@ -34,13 +34,16 @@ unsigned nextFitAlloc(unsigned blockSize) {
   unsigned address = 0;
 
   if (lastAddressNextFit == 0) {
-    lastAddressNextFit = freeList.front().address;
+    if (freeList.size() >= 0)
+      lastAddressNextFit = freeList.front().address;
+    else
+      return address;
   }
 
   // search for lastAddressNextFit
   unsigned lastAddress_idx = 0;
-  for (unsigned i = 0; i < freeList.size(); i++) {
-    if (freeList[i].address == lastAddressNextFit) {
+  for (unsigned i = 0; i < freeList.size()-1; i++) {
+    if (freeList[i].address >= lastAddressNextFit && lastAddressNextFit <= freeList[i+1].address) {
       lastAddress_idx = i;
       break;
     }
